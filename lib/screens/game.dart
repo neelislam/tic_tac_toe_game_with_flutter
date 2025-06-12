@@ -18,7 +18,8 @@ class _gamePageState extends State<gamePage> {
   String resultDeclaration = '';
   bool winnerFound = false;
   List<String> displayXO = ['', '', '', '', '', '', '', '', ''];
-
+  List<int> matchedIndexes = [];
+  int attempts = 0;
   int oScore = 0;
   int xScore = 0;
   int filledBoxes = 0;
@@ -33,6 +34,29 @@ class _gamePageState extends State<gamePage> {
       fontSize: 22
     )
   );
+  static var customFontWhiteRes = GoogleFonts.coiny(
+      textStyle: TextStyle(
+          color: Colors.white,
+          letterSpacing: 3,
+          fontSize: 35
+      )
+  );
+
+  static var customFontWhitePlayer = GoogleFonts.coiny(
+      textStyle: TextStyle(
+          color: Colors.white,
+          letterSpacing: 3,
+          fontSize: 30
+      )
+  );
+  static var customFontWhiteScore = GoogleFonts.coiny(
+      textStyle: TextStyle(
+          color: Colors.white,
+          letterSpacing: 3,
+          fontSize: 40
+      )
+  );
+
   static var customFontWhiteTimer = GoogleFonts.coiny(
       textStyle: TextStyle(
           color: Colors.white,
@@ -78,29 +102,16 @@ class _gamePageState extends State<gamePage> {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text('Player O', style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 30,
-                          ) ,),
-                          Text(oScore.toString(), style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 30,
-                          ) ,)
+                          Text('Player O', style: customFontWhitePlayer ,),
+                          Text(oScore.toString(), style: customFontWhiteScore,)
                         ],
                       ),
                       SizedBox(width: 50,),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text('Player X', style: TextStyle(
-
-                            fontWeight: FontWeight.bold,
-                            fontSize: 30,
-                          ) ,),
-                          Text(xScore.toString(), style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 30,
-                          ) ,)
+                          Text('Player X', style: customFontWhitePlayer ,),
+                          Text(xScore.toString(), style: customFontWhiteScore,)
                         ],
                       ),
                     ],
@@ -129,7 +140,7 @@ class _gamePageState extends State<gamePage> {
                           width: 5,
                           color: MainColor.primaryColor,
                         ),
-                        color: MainColor.secondaryColor,
+                        color: matchedIndexes.contains(index)? MainColor.accentColor:   MainColor.secondaryColor,
                       ),
                       child: Center(
                         child: Text(
@@ -148,13 +159,15 @@ class _gamePageState extends State<gamePage> {
                 },
               ),
             ),
+
             Expanded(flex: 2,
                 child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(resultDeclaration, style: customFontWhite,),
-                        SizedBox(height: 10,),
+
+                        Text(resultDeclaration, style: customFontWhiteRes,),
+                        SizedBox(height: 80,),
                         _buildTimer()
                       ],
                     )
@@ -191,6 +204,8 @@ class _gamePageState extends State<gamePage> {
         displayXO[0] != '') {
       setState(() {
         resultDeclaration = 'Player ${displayXO[0]} Wins!';
+        matchedIndexes.addAll([0,1,2]);
+        stopTimer();
         _updateScore(displayXO[0]);
       });
     }
@@ -200,6 +215,9 @@ class _gamePageState extends State<gamePage> {
         displayXO[3] != '') {
       setState(() {
         resultDeclaration = 'Player ${displayXO[3]} Wins!';
+        matchedIndexes.addAll([3,4,5]);
+        stopTimer();
+
         _updateScore(displayXO[3]);
       });
     }
@@ -210,6 +228,8 @@ class _gamePageState extends State<gamePage> {
         displayXO[6] != '') {
       setState(() {
         resultDeclaration = 'Player ${displayXO[6]} Wins!';
+        matchedIndexes.addAll([6,7,8]);
+        stopTimer();
         _updateScore(displayXO[6]);
       });
     }
@@ -220,6 +240,8 @@ class _gamePageState extends State<gamePage> {
         displayXO[0] != '') {
       setState(() {
         resultDeclaration = 'Player ${displayXO[0]} Wins!';
+        matchedIndexes.addAll([0,3,6]);
+        stopTimer();
         _updateScore(displayXO[0]);
       });
     }
@@ -229,6 +251,8 @@ class _gamePageState extends State<gamePage> {
         displayXO[1] != '') {
       setState(() {
         resultDeclaration = 'Player ${displayXO[1]} Wins!';
+        matchedIndexes.addAll([1,4,7]);
+        stopTimer();
         _updateScore(displayXO[1]);
       });
     }
@@ -239,6 +263,8 @@ class _gamePageState extends State<gamePage> {
         displayXO[2] != '') {
       setState(() {
         resultDeclaration = 'Player ${displayXO[2]} Wins!';
+        matchedIndexes.addAll([2,5,8]);
+        stopTimer();
         _updateScore(displayXO[2]);
       });
     }
@@ -251,6 +277,8 @@ class _gamePageState extends State<gamePage> {
         displayXO[0] != '') {
       setState(() {
         resultDeclaration = 'Player ${displayXO[0]} Wins!';
+        matchedIndexes.addAll([0,4,8]);
+        stopTimer();
         _updateScore(displayXO[0]);
       });
     }
@@ -261,6 +289,8 @@ class _gamePageState extends State<gamePage> {
         displayXO[2] != '') {
       setState(() {
         resultDeclaration = 'Player ${displayXO[2]} Wins!';
+        matchedIndexes.addAll([2,4,6]);
+        stopTimer();
         _updateScore(displayXO[2]);
       });
     }
@@ -318,8 +348,10 @@ class _gamePageState extends State<gamePage> {
         onPressed: (){
           startTimer();
           _clearBoard();
+          attempts++;
         },
-        child: Text('Play Again',
+        child: Text(
+          attempts==0 ? 'Start' : 'Play Again',
           style: customFontWhite,
         )
     );
