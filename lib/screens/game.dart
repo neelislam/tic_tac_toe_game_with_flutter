@@ -1,4 +1,8 @@
+import 'dart:async';
+// import 'dart:js_interop';
+
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../constants/colors.dart';
 
@@ -18,6 +22,45 @@ class _gamePageState extends State<gamePage> {
   int oScore = 0;
   int xScore = 0;
   int filledBoxes = 0;
+  static const maxSeconds = 30;
+  int seconds = maxSeconds;
+  Timer? timer;
+
+  static var customFontWhite = GoogleFonts.coiny(
+    textStyle: TextStyle(
+      color: Colors.white,
+      letterSpacing: 3,
+      fontSize: 22
+    )
+  );
+  static var customFontWhiteTimer = GoogleFonts.coiny(
+      textStyle: TextStyle(
+          color: Colors.white,
+          letterSpacing: 3,
+          fontSize: 28
+      )
+  );
+
+
+  void startTimer(){
+    timer = Timer.periodic(Duration(seconds: 1), (_){
+      setState(() {
+        if(seconds > 0){
+          seconds--;
+        }
+      });
+    });
+
+  }
+
+  void stopTimer(){
+    resetTimer();
+    timer?.cancel();
+  }
+
+  void resetTimer()=>
+    seconds = maxSeconds;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,6 +93,7 @@ class _gamePageState extends State<gamePage> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text('Player X', style: TextStyle(
+
                             fontWeight: FontWeight.bold,
                             fontSize: 30,
                           ) ,),
@@ -104,7 +148,18 @@ class _gamePageState extends State<gamePage> {
                 },
               ),
             ),
-            Expanded(flex: 2, child: Text(resultDeclaration)),
+            Expanded(flex: 2,
+                child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(resultDeclaration, style: customFontWhite,),
+                        SizedBox(height: 10,),
+                        _buildTimer()
+                      ],
+                    )
+                )
+            ),
           ],
         ),
       ),
@@ -112,17 +167,21 @@ class _gamePageState extends State<gamePage> {
   }
 
   void _tapped(int index) {
-    setState(() {
-      if (oTurn && displayXO[index] == '') {
-        displayXO[index] = 'O';
-        filledBoxes++;
-      } else if (!oTurn && displayXO[index] == '') {
-        displayXO[index] = 'X';
-        filledBoxes++;
-      }
-      oTurn = !oTurn;
-      _checkWinner();
-    });
+    final isRunning = timer == null? false : timer!.isActive;
+    if (isRunning){
+      setState(() {
+        if (oTurn && displayXO[index] == '') {
+          displayXO[index] = 'O';
+          filledBoxes++;
+        } else if (!oTurn && displayXO[index] == '') {
+          displayXO[index] = 'X';
+          filledBoxes++;
+        }
+        oTurn = !oTurn;
+        _checkWinner();
+
+      });
+    }
   }
 
   void _checkWinner() {
@@ -220,5 +279,49 @@ class _gamePageState extends State<gamePage> {
     }
     winnerFound = true;
 
+  }
+
+  void _clearBoard(){
+    setState(() {
+      for(int i = 0; i<9; i++){
+        displayXO[i]='';
+      }
+      resultDeclaration='';
+    });
+    filledBoxes=0;
+  }
+
+  Widget _buildTimer(){
+
+    final isRunning = timer == null? false : timer!.isActive;
+    return isRunning ? SizedBox(width: 100, height: 100,
+    child: Stack(
+      fit: StackFit.expand,
+      children: [
+        CircularProgressIndicator(
+          value: 1- seconds/maxSeconds,
+          valueColor: AlwaysStoppedAnimation(Colors.white),
+          strokeWidth: 8,
+          backgroundColor: MainColor.accentColor,
+
+        ),
+        Center(
+          child: Text('$seconds', style: customFontWhiteTimer,),
+        )
+      ],
+    ),)  :
+    ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white60,
+          padding: EdgeInsets.symmetric(horizontal: 100,vertical: 10),
+        ),
+        onPressed: (){
+          startTimer();
+          _clearBoard();
+        },
+        child: Text('Play Again',
+          style: customFontWhite,
+        )
+    );
   }
 }
