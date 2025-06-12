@@ -12,8 +12,12 @@ class gamePage extends StatefulWidget {
 class _gamePageState extends State<gamePage> {
   bool oTurn = true;
   String resultDeclaration = '';
-
+  bool winnerFound = false;
   List<String> displayXO = ['', '', '', '', '', '', '', '', ''];
+
+  int oScore = 0;
+  int xScore = 0;
+  int filledBoxes = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +27,42 @@ class _gamePageState extends State<gamePage> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Expanded(flex: 1, child: Text('Score Board')),
+            Expanded(flex: 1,
+                child: Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text('Player O', style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30,
+                          ) ,),
+                          Text(oScore.toString(), style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30,
+                          ) ,)
+                        ],
+                      ),
+                      SizedBox(width: 50,),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text('Player X', style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30,
+                          ) ,),
+                          Text(xScore.toString(), style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30,
+                          ) ,)
+                        ],
+                      ),
+                    ],
+
+                  ),
+                )),
             Expanded(
               flex: 3,
               child: GridView.builder(
@@ -65,8 +104,7 @@ class _gamePageState extends State<gamePage> {
                 },
               ),
             ),
-            Expanded(flex: 2,
-                child: Text(resultDeclaration)),
+            Expanded(flex: 2, child: Text(resultDeclaration)),
           ],
         ),
       ),
@@ -77,8 +115,10 @@ class _gamePageState extends State<gamePage> {
     setState(() {
       if (oTurn && displayXO[index] == '') {
         displayXO[index] = 'O';
+        filledBoxes++;
       } else if (!oTurn && displayXO[index] == '') {
         displayXO[index] = 'X';
+        filledBoxes++;
       }
       oTurn = !oTurn;
       _checkWinner();
@@ -92,6 +132,7 @@ class _gamePageState extends State<gamePage> {
         displayXO[0] != '') {
       setState(() {
         resultDeclaration = 'Player ${displayXO[0]} Wins!';
+        _updateScore(displayXO[0]);
       });
     }
     //2nd row
@@ -100,6 +141,7 @@ class _gamePageState extends State<gamePage> {
         displayXO[3] != '') {
       setState(() {
         resultDeclaration = 'Player ${displayXO[3]} Wins!';
+        _updateScore(displayXO[3]);
       });
     }
 
@@ -109,6 +151,7 @@ class _gamePageState extends State<gamePage> {
         displayXO[6] != '') {
       setState(() {
         resultDeclaration = 'Player ${displayXO[6]} Wins!';
+        _updateScore(displayXO[6]);
       });
     }
 
@@ -118,6 +161,7 @@ class _gamePageState extends State<gamePage> {
         displayXO[0] != '') {
       setState(() {
         resultDeclaration = 'Player ${displayXO[0]} Wins!';
+        _updateScore(displayXO[0]);
       });
     }
     //2nd col
@@ -126,6 +170,7 @@ class _gamePageState extends State<gamePage> {
         displayXO[1] != '') {
       setState(() {
         resultDeclaration = 'Player ${displayXO[1]} Wins!';
+        _updateScore(displayXO[1]);
       });
     }
 
@@ -135,6 +180,7 @@ class _gamePageState extends State<gamePage> {
         displayXO[2] != '') {
       setState(() {
         resultDeclaration = 'Player ${displayXO[2]} Wins!';
+        _updateScore(displayXO[2]);
       });
     }
 
@@ -146,6 +192,7 @@ class _gamePageState extends State<gamePage> {
         displayXO[0] != '') {
       setState(() {
         resultDeclaration = 'Player ${displayXO[0]} Wins!';
+        _updateScore(displayXO[0]);
       });
     }
     //corner 2
@@ -155,12 +202,23 @@ class _gamePageState extends State<gamePage> {
         displayXO[2] != '') {
       setState(() {
         resultDeclaration = 'Player ${displayXO[2]} Wins!';
+        _updateScore(displayXO[2]);
       });
     }
+    if( !winnerFound && filledBoxes == 9){
+      setState(() {
+        resultDeclaration = 'Nobody Wins!';
+      });
+    }
+  }
 
+  void _updateScore(String winner){
+    if(winner == 'O'){
+      oScore++;
+    }else if(winner == 'X'){
+      xScore++;
+    }
+    winnerFound = true;
 
   }
 }
-
-
-
