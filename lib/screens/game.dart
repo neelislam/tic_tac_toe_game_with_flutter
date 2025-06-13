@@ -147,7 +147,7 @@ class _gamePageState extends State<gamePage> {
                           displayXO[index],
                           style: TextStyle(
                             color: MainColor.primaryColor,
-                            fontSize: 70,
+                            fontSize: 80,
 
                             fontWeight: FontWeight.bold,
                             fontStyle: FontStyle.italic,
